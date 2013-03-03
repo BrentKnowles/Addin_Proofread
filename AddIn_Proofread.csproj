@@ -31,4 +31,68 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\yom2013B\coreutilities\coreutilities2013.csproj">
+      <Project>{6EAA0B60-70E3-49FB-88E9-272D2719CECF}</Project>
+      <Name>coreutilities2013</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\yom2013B\Layout\Layout.csproj">
+      <Project>{DA1AA77A-D94D-4F79-AC96-7BC9AF0AFB34}</Project>
+      <Name>Layout</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\yom2013B\MEF_Interfaces\MEF_Interfaces.csproj">
+      <Project>{2E366A51-224A-4C3B-90D6-FE8C81C9EB78}</Project>
+      <Name>MEF_Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RulesEngine\RulesEngine.csproj">
+      <Project>{E00FF039-A404-4F7D-862B-1AB602C150BF}</Project>
+      <Name>RulesEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\yom2013B\EventTable\TransactionSystem.csproj">
+      <Project>{015AC0C9-2F05-45BE-AD21-5A475AACA2D7}</Project>
+      <Name>TransactionSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\yom2013B\database\database.csproj">
+      <Project>{C08FDDB5-5C59-4611-98E7-76674F290896}</Project>
+      <Name>database</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="mef_Addin_Proofread.cs" />
+    <Compile Include="Advice.cs" />
+    <Compile Include="WriteThink.cs" />
+    <Compile Include="CharacterInDialogClass.cs" />
+    <Compile Include="dialogReview.cs" />
+    <Compile Include="dialogReview.Designer.cs" />
+    <Compile Include="fAdminGrid.cs" />
+    <Compile Include="fAdminGrid.Designer.cs" />
+    <Compile Include="fStatPanel.cs" />
+    <Compile Include="fStatPanel.Designer.cs" />
+    <Compile Include="statPanel.cs" />
+    <Compile Include="statPanel.Designer.cs" />
+    <Compile Include="TransactionUpdateProofreadVersion.cs" />
+    <Compile Include="NoteDataXML_Character.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="NetSpell.SpellChecker">
+      <HintPath>..\..\..\librariesused\netspell\src\NetSpell.SpellChecker\bin\Debug\NetSpell.SpellChecker.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\speakerrules.xml">
+      <LogicalName>resources.speakerrules.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\cross.png">
+      <LogicalName>resources.cross.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
