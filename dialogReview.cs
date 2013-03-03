@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using Layout;
 using CoreUtilities;
+using System.Text.RegularExpressions;
 using MefAddIns;
 namespace WriteThinker
 {
@@ -471,6 +472,15 @@ namespace WriteThinker
 
             Clipboard.SetText(send);
         }
+
+		// http://www.codeproject.com/KB/recipes/wildcardtoregex.aspx
+		public static string WildcardToRegex(string pattern)
+		{
+			return "^" + Regex.Escape(pattern).
+				Replace(@"\*", ".*").
+					Replace(@"\?", ".") + "$";
+		}
+
         /// <summary>
         /// does the full dialog preview THING + 
         /// </summary>
@@ -489,7 +499,14 @@ namespace WriteThinker
              adder.sPattern = "***ly";
             adder.sAdvice = "Trim when possible";
             adder.bOverUsedPhrase = false;
-            advices.Add (adder);
+            		advices.Add (adder);
+
+
+			adder = new Advice();
+			adder.sPattern = "****ing";
+			adder.sAdvice = "Trim when possible";
+			adder.bOverUsedPhrase = false;
+			advices.Add (adder);
 
             // how to set colors
 
@@ -499,6 +516,21 @@ namespace WriteThinker
                 Color colorToUse = Color.PaleVioletRed;
 
                 System.Text.RegularExpressions.Regex regex ;
+
+
+				if (sPattern.IndexOf("****") > -1)
+				{
+					// we do a different regex if passing my wild card in
+					sPattern = sPattern.Replace("****", "").Trim();
+					sPattern = WildcardToRegex("then *ing");
+					regex = 
+
+						new System.Text.RegularExpressions.Regex(@sPattern,
+					                                                 System.Text.RegularExpressions.RegexOptions.IgnoreCase |
+					                                                 System.Text.RegularExpressions.RegexOptions.Multiline);
+					colorToUse = GrammarColor2;
+				}
+				else
                 if (sPattern.IndexOf("***") > -1)
                 {
                     // we do a different regex if passing my wild card in

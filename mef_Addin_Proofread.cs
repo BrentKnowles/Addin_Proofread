@@ -155,76 +155,114 @@ namespace MefAddIns
 				FileUtils.PreparePullResource(_assembly, "resources.speakerrules.xml", PathToSpeakerRules ());
 			}
 		}
+
+		public WriteThinker.CharacterInDialogClass ParseTextForCharacter (NoteDataXML_Character characterNote)
+		{
+			WriteThinker.CharacterInDialogClass character = new WriteThinker.CharacterInDialogClass();
+			if (characterNote.Gender == "Male")
+				character.Gender = CharacterInDialogClass.gender.male;
+			else
+				if (characterNote.Gender == "Female")
+				character.Gender = CharacterInDialogClass.gender.female;
+			else
+				character.Gender = CharacterInDialogClass.gender.other;
+
+
+			character.color = characterNote.CharacterColor;
+			character.Tilt = characterNote.Priority;
+			character.Name = characterNote.Caption;
+
+			string sAlias =characterNote.Alias;
+			if (sAlias.IndexOf(",") == -1)
+			{
+				if (sAlias != "")
+				{
+					character.Alias = new string[1] { sAlias.Trim() };
+				}
+			}
+			else
+				if (sAlias != "")
+			{
+				character.Alias = sAlias.Split(',');
+			}
+			else
+			{
+				character.Alias = null;
+			}
+
+			return character;
+		}
+
 		/// <summary>
 		/// the text comes in as richtext and we return a character, if one found
 		/// </summary>
 		/// <param name="sText"></param>
 		/// <returns></returns>
-		public WriteThinker.CharacterInDialogClass ParseTextForCharacter(string sText, string sCaption)
-		{
-			
-			int nGender = sText.IndexOf("Gender: ");
-			if (nGender > -1)
-			{
-				WriteThinker.CharacterInDialogClass character = new WriteThinker.CharacterInDialogClass();
-				
-				character.Gender = WriteThinker.CharacterInDialogClass.gender.male;
-				// the text is RichTextFormat!
-				string sGender = General.SubStringBetween(sText, "Gender: ", "\n");
-				if (sGender.ToLower().Trim() == "female")
-				{
-					character.Gender = WriteThinker.CharacterInDialogClass.gender.female;
-				}
-				else
-					if (sGender.ToLower().Trim() == "other")
-				{
-					character.Gender = WriteThinker.CharacterInDialogClass.gender.other;
-				}
-				
-				string sColor = General.SubStringBetween(sText, "Color: ", "\n").ToLower().Trim();
-				
-				character.color = System.Drawing.Color.FromName(sColor);
-				
-				int nPriority = 0;
-				string sPriority = General.SubStringBetween(sText, "Priority: ", "\n");
-				try
-				{
-					nPriority = Int32.Parse(sPriority);
-				}
-				catch (Exception)
-				{
-					
-				}
-				character.Tilt = nPriority;
-				
-				character.Name = sCaption;
-				
-				
-				// now grab the alias Alias: \\par
-				
-				string sAlias = General.SubStringBetween(sText, "Alias: ", "\n");
-				if (sAlias.IndexOf(",") == -1)
-				{
-					if (sAlias != "")
-					{
-						character.Alias = new string[1] { sAlias.Trim() };
-					}
-				}
-				else
-					if (sAlias != "")
-				{
-					character.Alias = sAlias.Split(',');
-				}
-				else
-				{
-					character.Alias = null;
-				}
-				
-				return character;
-			}
-			return null;
-			
-		}
+//		public WriteThinker.CharacterInDialogClass ParseTextForCharacter(string sText, string sCaption)
+//		{
+//			//ToDO: This is deprecated, replaced with Character note
+//			int nGender = sText.IndexOf("Gender: ");
+//			if (nGender > -1)
+//			{
+//				WriteThinker.CharacterInDialogClass character = new WriteThinker.CharacterInDialogClass();
+//				
+//				character.Gender = WriteThinker.CharacterInDialogClass.gender.male;
+//				// the text is RichTextFormat!
+//				string sGender = General.SubStringBetween(sText, "Gender: ", "\n");
+//				if (sGender.ToLower().Trim() == "female")
+//				{
+//					character.Gender = WriteThinker.CharacterInDialogClass.gender.female;
+//				}
+//				else
+//					if (sGender.ToLower().Trim() == "other")
+//				{
+//					character.Gender = WriteThinker.CharacterInDialogClass.gender.other;
+//				}
+//				
+//				string sColor = General.SubStringBetween(sText, "Color: ", "\n").ToLower().Trim();
+//				
+//				character.color = System.Drawing.Color.FromName(sColor);
+//				
+//				int nPriority = 0;
+//				string sPriority = General.SubStringBetween(sText, "Priority: ", "\n");
+//				try
+//				{
+//					nPriority = Int32.Parse(sPriority);
+//				}
+//				catch (Exception)
+//				{
+//					
+//				}
+//				character.Tilt = nPriority;
+//				
+//				character.Name = sCaption;
+//				
+//				
+//				// now grab the alias Alias: \\par
+//				
+//				string sAlias = General.SubStringBetween(sText, "Alias: ", "\n");
+//				if (sAlias.IndexOf(",") == -1)
+//				{
+//					if (sAlias != "")
+//					{
+//						character.Alias = new string[1] { sAlias.Trim() };
+//					}
+//				}
+//				else
+//					if (sAlias != "")
+//				{
+//					character.Alias = sAlias.Split(',');
+//				}
+//				else
+//				{
+//					character.Alias = null;
+//				}
+//				
+//				return character;
+//			}
+//			return null;
+//			
+//		}
 		private CharacterInDialogClass[] GetCharacterArray()
 		{
 		
@@ -233,7 +271,7 @@ namespace MefAddIns
 			// parse through all notes, extracting character information
 			ArrayList characters_temp = new ArrayList();
 			WriteThinker.CharacterInDialogClass character = null;
-			System.Windows.Forms.RichTextBox box = new System.Windows.Forms.RichTextBox();
+		//	System.Windows.Forms.RichTextBox box = new System.Windows.Forms.RichTextBox();
 			
 			foreach (NoteDataInterface note in LayoutDetails.Instance.CurrentLayout.GetAllNotes())
 			{
@@ -241,15 +279,15 @@ namespace MefAddIns
 				if (note != null)
 				{
 					//if (ap.ShapeType == Appearance.shapetype.Note)
-					if (note is NoteDataXML_RichText)
+					if (note is NoteDataXML_Character)
 					{
-						if (note.Data1 != null && note.Data1 != Constants.BLANK)
+						//if (note.Data1 != null && note.Data1 != Constants.BLANK)
 						{
 							
-							box.Rtf = "";
-							box.Rtf = note.Data1;
+						//	box.Rtf = "";
+							//box.Rtf = note.Data1;
 							// We NEED to convert the RTF to text for easier parsing and allowing formatting like bolds
-							character = ParseTextForCharacter(box.Text, note.Caption);
+							character = ParseTextForCharacter(note as NoteDataXML_Character);
 							
 							if (character != null)
 							{
@@ -262,7 +300,7 @@ namespace MefAddIns
 				}
 				
 			}
-			box = null;
+			//box = null;
 			
 			
 			// this probably should be part of BASE NOTE OBJECT???
@@ -504,12 +542,13 @@ namespace MefAddIns
 				
 				//RichBoxLinks.progressForm progress = new RichBoxLinks.progressForm(RichText.Text.Length, "Analyzing Dialog");
 				
-				//progress.StartPosition = FormStartPosition.CenterScreen;
-			//	progress.Show();
-				
+
+				LayoutDetails.Instance.Progress.Value = 0;
+				LayoutDetails.Instance.Progress.Step = 1;
+				LayoutDetails.Instance.Progress.Maximum = CurrentTextBox.Text.Length;
 				for (i = 0; i < CurrentTextBox.Text.Length; i++)
 				{
-					///progress.progressBar.PerformStep();
+					LayoutDetails.Instance.Progress.PerformStep();
 					CurrentTextBox.SelectionStart = i;
 					CurrentTextBox.SelectionLength = 1;
 					if (0 == i)
