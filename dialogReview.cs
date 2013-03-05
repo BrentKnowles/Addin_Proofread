@@ -517,18 +517,24 @@ namespace WriteThinker
 
                 System.Text.RegularExpressions.Regex regex ;
 
-
+				// useful toolf or figuring out regex http://regexpal.com/
 				if (sPattern.IndexOf("****") > -1)
 				{
 					// we do a different regex if passing my wild card in
-					sPattern = sPattern.Replace("****", "").Trim();
-					sPattern = WildcardToRegex("then *ing");
+				//	sPattern = sPattern.Replace("****", "").Trim();
+				//	sPattern = WildcardToRegex("then *ing");
+
+					//\bthen\b\s\b.*ing\b"
+					// February 2013 - In case I forget the \w{0,20} makes sure there's only a reasonable amount of space/words between the THEN and the ING
+					string code = @"\b(then|Then|and|is)\b\s\b\w{0,20}ing\b";
+				//	NewMessage.Show (sPattern);
 					regex = 
 
-						new System.Text.RegularExpressions.Regex(@sPattern,
+						new System.Text.RegularExpressions.Regex(code,
 					                                                 System.Text.RegularExpressions.RegexOptions.IgnoreCase |
 					                                                 System.Text.RegularExpressions.RegexOptions.Multiline);
 					colorToUse = GrammarColor2;
+					sPattern = "ING forms";
 				}
 				else
                 if (sPattern.IndexOf("***") > -1)

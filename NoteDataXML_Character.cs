@@ -9,7 +9,8 @@ namespace AddIn_Proofread
 {
 	public class NoteDataXML_Character  : Layout.NoteDataXML_RichText
 	{
-		
+		public override int defaultHeight { get { return 500; } }
+		public override int defaultWidth { get { return 300; } }
 		#region variables
 		public override bool IsLinkable { get { return true; }}
 		
@@ -19,7 +20,8 @@ namespace AddIn_Proofread
 		
 		#region interface
 		TableLayoutPanel TablePanel = null;
-
+		ComboBox ColorCombo= null;
+		Label ColorLabel = null;
 #endregion
 		string gender="Male";
 
@@ -188,10 +190,10 @@ namespace AddIn_Proofread
 			//
 			// COLOR
 			//
-			Label ColorLabel = new Label ();
+			 ColorLabel = new Label ();
 			ColorLabel.Text = Loc.Instance.GetString ("Color");
 			ColorLabel.Click += (object sender, EventArgs e) => BringToFrontAndShow ();
-			ComboBox ColorCombo = new ComboBox ();
+			 ColorCombo = new ComboBox ();
 			ColorCombo.DropDownStyle = ComboBoxStyle.DropDownList;
 			int count = 0;
 			int matchcount = 0;
@@ -214,7 +216,7 @@ namespace AddIn_Proofread
 			ColorCombo.SelectedIndex = matchcount;
 			ColorCombo.SelectedIndexChanged+= HandleSelectedColorIndexChanged;
 
-
+			ColorLabel.BackColor = (Color)ColorCombo.SelectedItem;
 
 			TablePanel.Controls.Add(GenderLabel,0,0);
 			TablePanel.Controls.Add(GenderCombo,1,0);
@@ -238,6 +240,7 @@ namespace AddIn_Proofread
 			if ((sender as ComboBox).SelectedItem != null) {
 			//	NewMessage.Show ("Changing color to ", (sender as ComboBox).SelectedItem.ToString());
 				ColorName =  ((Color)(sender as ComboBox).SelectedItem).Name;
+				ColorLabel.BackColor = (Color)(sender as ComboBox).SelectedItem;
 			}
 
 		}
