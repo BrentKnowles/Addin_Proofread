@@ -434,6 +434,8 @@ namespace WriteThinker
         void HandleUpdateVersionClick (object sender, System.EventArgs e)
         {
 			LayoutDetails.Instance.TransactionsList.AddEvent (new Transactions.TransactionUpdateProofreadVersion(DateTime.Now, LayoutDetails.Instance.CurrentLayout.GUID, (sender as System.Windows.Forms.Button).Text));
+			// we do this otherwise user does not see the NewMessage
+			this.AlwaysOnTop.Checked = false;
 			NewMessage.Show (Loc.Instance.GetString ("Version Updated."));
         }
 

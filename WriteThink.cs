@@ -480,7 +480,7 @@ namespace WriteThinker
 
             if (sSource.IndexOf("Listen,") > -1)
             {
-                int breaker = 9;
+              //  int breaker = 9;
             }
 
             // This worked to get he and shes and whatnot but I wanted to try something
