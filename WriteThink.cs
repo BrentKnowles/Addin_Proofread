@@ -753,7 +753,7 @@ namespace WriteThinker
                     output.Clear();
                     if (sMaxValue == "I")
                     {
-                        int breaker = 9;
+                    //    int breaker = 9;
                     }
                     output.Add(sMaxValue);
 
@@ -814,7 +814,7 @@ namespace WriteThinker
                 {
                     if (s.ToLower().IndexOf("like it") >= 0)
                     {
-                        int breaker = 9;
+                      //  int breaker = 9;
                     }
                     Regex r = new Regex("\"");
                     MatchCollection match = r.Matches(s);

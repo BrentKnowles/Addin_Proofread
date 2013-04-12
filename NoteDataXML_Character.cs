@@ -309,7 +309,21 @@ namespace AddIn_Proofread
 			return Loc.Instance.GetString("Character");
 		}
 
-		
+		public NoteDataXML_Character(NoteDataInterface Note) : base(Note)
+		{
+			
+		}
+		public override void CopyNote (NoteDataInterface Note)
+		{
+			base.CopyNote (Note);
+			if (Note is NoteDataXML_Character)
+			{
+				this.Gender = (Note as NoteDataXML_Character).Gender;
+				this.Priority = (Note as NoteDataXML_Character).Priority;
+				this.Alias = (Note as NoteDataXML_Character).Alias;
+				this.ColorName =  (Note as NoteDataXML_Character).ColorName;
+			}
+		}
 
 	}
 }
