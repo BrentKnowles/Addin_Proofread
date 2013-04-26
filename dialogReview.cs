@@ -334,95 +334,93 @@ namespace WriteThinker
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void listDialog_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataRowView row = (DataRowView)(listDialog.SelectedItem);
+        private void listDialog_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			try {
+				DataRowView row = (DataRowView)(listDialog.SelectedItem);
 
             
             
-            if (row != null)
-            {
+				if (row != null) {
                
-                FillPartOfSpeechTextBox(row["Text"].ToString());
-                richTextBoxExPreview.BackColor = Color.White;
-                if (FindDoubleLetterError(row["Text"].ToString()) > -1)
-                {
-                    richTextBoxExPreview.BackColor = Color.Red;
-                    richTextBoxExPreview.Text = "Two Capital Letters!" + Environment.NewLine+richTextBoxExPreview.Text;
-                }
-                if ((bool)row["dialog"] == true && FindFirstUpper(row["Text"].ToString()) > -1)
-                {
-                    richTextBoxExPreview.BackColor = Color.Red;
-                    richTextBoxExPreview.Text = "DIRECT ADDRESS ERROR!" + Environment.NewLine + richTextBoxExPreview.Text;
+					FillPartOfSpeechTextBox (row ["Text"].ToString ());
+					richTextBoxExPreview.BackColor = Color.White;
+					if (FindDoubleLetterError (row ["Text"].ToString ()) > -1) {
+						richTextBoxExPreview.BackColor = Color.Red;
+						richTextBoxExPreview.Text = "Two Capital Letters!" + Environment.NewLine + richTextBoxExPreview.Text;
+					}
+					if ((bool)row ["dialog"] == true && FindFirstUpper (row ["Text"].ToString ()) > -1) {
+						richTextBoxExPreview.BackColor = Color.Red;
+						richTextBoxExPreview.Text = "DIRECT ADDRESS ERROR!" + Environment.NewLine + richTextBoxExPreview.Text;
 
 
-                }
+					}
                 
-                labelconfidence.Text = row["confidence"].ToString();
+					labelconfidence.Text = row ["confidence"].ToString ();
 
-                labelPassive.Text = String.Format("Passive: {0}", row["IsPassive"].ToString());
-                labelSyllables.Text = String.Format("Syllables: {0}", row["syllables"].ToString());
+					labelPassive.Text = String.Format ("Passive: {0}", row ["IsPassive"].ToString ());
+					labelSyllables.Text = String.Format ("Syllables: {0}", row ["syllables"].ToString ());
 
-                string sPreviousLine = "";
-                string sNextLine = "";
-                // look up id
-                int id = (int)row["id"] ;
+					string sPreviousLine = "";
+					string sNextLine = "";
+					// look up id
+					int id = (int)row ["id"];
                 
-                if (id > 0)
-                    id = id - 1;
-                DataRow foundrow = view.Table.Rows.Find(id);
-                if (foundrow != null)
-                {
-                    sPreviousLine = foundrow["Text"].ToString();
-                }
+					if (id > 0)
+						id = id - 1;
+					DataRow foundrow = view.Table.Rows.Find (id);
+					if (foundrow != null) {
+						sPreviousLine = foundrow ["Text"].ToString ();
+					}
 
-                id = id + 1; // reset
-                if (id < view.Table.Rows.Count - 1)
-                {
-                    id++;
-                }
-                 foundrow = view.Table.Rows.Find(id);
-                if (foundrow != null)
-                {
-                    sNextLine = foundrow["Text"].ToString();
-                }
+					id = id + 1; // reset
+					if (id < view.Table.Rows.Count - 1) {
+						id++;
+					}
+					foundrow = view.Table.Rows.Find (id);
+					if (foundrow != null) {
+						sNextLine = foundrow ["Text"].ToString ();
+					}
 
-                labelPrevious.Text = sPreviousLine;
-                labelNext.Text = sNextLine;
+					labelPrevious.Text = sPreviousLine;
+					labelNext.Text = sNextLine;
 
 
-                // should find it in the source text, if available.
-                string sTextToFind = row["Text"].ToString();
+					// should find it in the source text, if available.
+					string sTextToFind = row ["Text"].ToString ();
 
 
 
-                // August 2012  - instead of removing " I'm not icing that when a sentence starts with a " we sometimes have failure
-                if (sTextToFind.Length > 0)
-                {
-                    if (sTextToFind[0] == '"')
-                    {
-                        //sTextToFind[0] = ' '; // put a blank instead
-                        sTextToFind = sTextToFind.TrimStart(new char[1] { '"' });
-                        //sTextToFind = sTextToFind.Trim();
-                    }
-                }
+					// August 2012  - instead of removing " I'm not icing that when a sentence starts with a " we sometimes have failure
+					if (sTextToFind.Length > 0) {
+						if (sTextToFind [0] == '"') {
+							//sTextToFind[0] = ' '; // put a blank instead
+							sTextToFind = sTextToFind.TrimStart (new char[1] { '"' });
+							//sTextToFind = sTextToFind.Trim();
+						}
+					}
 
-                // August 2012 -- I'm removing this "cleanup". I don't understand why I'd want to remove " marks because I need 'em
-                //#
-                // sep 2009
-                // do a little cleanup on strings so they are more findeable
-                //#
-                //sTextToFind = sTextToFind.Replace("\"", "");
-                //sTextToFind = sTextToFind.Replace("�", "'");
+					// August 2012 -- I'm removing this "cleanup". I don't understand why I'd want to remove " marks because I need 'em
+					//#
+					// sep 2009
+					// do a little cleanup on strings so they are more findeable
+					//#
+					//sTextToFind = sTextToFind.Replace("\"", "");
+					//sTextToFind = sTextToFind.Replace("�", "'");
 
-                int nPositionFound = OnFindDialogLine(sTextToFind, LAST_POSITION_FOUND);
-                if (nPositionFound > -1)
-                {
-                    // we record the last position we found up to
-                    // then we pass this in the next search so we NEVER backtrack
-                    LAST_POSITION_FOUND = nPositionFound;
-                }
-            }
+					int nPositionFound = OnFindDialogLine (sTextToFind, LAST_POSITION_FOUND);
+					if (nPositionFound > -1) {
+						// we record the last position we found up to
+						// then we pass this in the next search so we NEVER backtrack
+						LAST_POSITION_FOUND = nPositionFound;
+					}
+				}
+			} catch (Exception ex) {
+				// adding this because I received a crash (April 2013) when navigating a list of items
+				// not sure if it was a one-off (it is the only crash after hundreds of proofread attempts) or if
+				//it points to a subtle bug somewhere.
+				NewMessage.Show (ex.ToString());
+			}
         }
 
         private void dialogReview_FormClosing(object sender, FormClosingEventArgs e)

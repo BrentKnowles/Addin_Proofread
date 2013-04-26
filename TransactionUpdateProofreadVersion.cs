@@ -34,7 +34,8 @@ namespace Transactions
 	{
 		public TransactionUpdateProofreadVersion (DateTime date, string LayoutGuid, string Version) : base()
 		{
-			RowData[TransactionsTable.TYPE.Index] = 3002;
+			// April 26 2013. I used the wrong number here. Needed to change it.
+			RowData[TransactionsTable.TYPE.Index] = 13002;
 			RowData[TransactionsTable.DATE.Index] = date;
 			RowData[TransactionsTable.DATA1_LAYOUTGUID.Index] = LayoutGuid;
 			RowData[TransactionsTable.DATA2.Index] = Version;
