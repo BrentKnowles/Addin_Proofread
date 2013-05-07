@@ -60,9 +60,9 @@ namespace MefAddIns
 		public static List<Advice> ConvertTableToList (ref string version)
 		{
 			List<Advice> result = new List<Advice>();
-			List<string> patterns = LayoutDetails.Instance.TableLayout.GetListOfStringsFromSystemTable (LayoutDetails.SYSTEM_GRAMMAR, 1, Constants.BLANK, false);
-			List<string> advice = LayoutDetails.Instance.TableLayout.GetListOfStringsFromSystemTable (LayoutDetails.SYSTEM_GRAMMAR, 2, Constants.BLANK, false);
-			List<string> overused = LayoutDetails.Instance.TableLayout.GetListOfStringsFromSystemTable (LayoutDetails.SYSTEM_GRAMMAR, 3, Constants.BLANK, false);
+			List<string> patterns = LayoutDetails.Instance.TableLayout.GetListOfStringsFromSystemTable (Addin_Proofread.SYSTEM_GRAMMAR, 1, Constants.BLANK, false);
+			List<string> advice = LayoutDetails.Instance.TableLayout.GetListOfStringsFromSystemTable (Addin_Proofread.SYSTEM_GRAMMAR, 2, Constants.BLANK, false);
+			List<string> overused = LayoutDetails.Instance.TableLayout.GetListOfStringsFromSystemTable (Addin_Proofread.SYSTEM_GRAMMAR, 3, Constants.BLANK, false);
 			if (patterns.Count != advice.Count || patterns.Count != overused.Count) {
 				throw new Exception ("grammar table is not equal");
 			}

@@ -28,7 +28,7 @@
 //###
 namespace MefAddIns
 {
-	//TODO: Need to get licensing information put into proper files, for credit to NetSpell http://sourceforge.net/projects/netspell/
+
 	using MefAddIns.Extensibility;
 	using System.ComponentModel.Composition;
 	using System;
@@ -120,10 +120,50 @@ namespace MefAddIns
 				myRunnForHotKeys(myAddInOnMainFormForHotKeys);
 			
 		}
+
+		public const string SYSTEM_GRAMMAR="list_grammar";
+
 		public override void RegisterType()
 		{
 			LayoutDetails.Instance.AddTo_TransactionsLIST(typeof(Transactions.TransactionUpdateProofreadVersion));
 			Layout.LayoutDetails.Instance.AddToList(typeof(NoteDataXML_Character), Loc.Instance.GetString ("Character"));
+
+			// Build default table of grammar
+
+			string TableName = SYSTEM_GRAMMAR;
+			LayoutPanels.NoteDataXML_Panel PanelContainingTables = LayoutPanel.GetPanelToAddTableTo (TableName);
+			if (PanelContainingTables != null) {
+				
+				// create the note
+				NoteDataXML_Table	randomTables = new NoteDataXML_Table(100, 100 , new ColumnDetails[4]{new ColumnDetails("id",100), 
+					new ColumnDetails("pattern",100), new ColumnDetails("advice",100), new ColumnDetails("overused",100)});
+
+				randomTables.Caption = TableName;
+				
+				
+				PanelContainingTables.AddNote (randomTables);
+				randomTables.CreateParent (PanelContainingTables.GetPanelsLayout ());
+				
+				randomTables.AddRow(new object[4]{
+					"1", "1.0", @"The first row of this table is a version number. Feel free to edit it when major changes are made to this list. On each Layout you can record the last grammar version you have checked it against.", "0"}
+				);
+				
+				randomTables.AddRow(new object[4]{
+					"2", "Among", @"When more than two things or persons are involved, among is usually called for.", "0"}
+				);
+				randomTables.AddRow(new object[4]{
+					"3", "As to whether", @"Whether is sufficient.", "1"}
+				);
+
+				//		LayoutDetails.Instance.TableLayout.SaveLayout();
+				PanelContainingTables.GetPanelsLayout ().SaveLayout ();
+				//NewMessage.Show("Making new");
+				// now we reload the system version
+				LayoutDetails.Instance.TableLayout.LoadLayout (LayoutDetails.TABLEGUID, true, null);
+				//BringToFrontAndShow ();
+			}
+
+
 		}
 		public void RespondToMenuOrHotkey<T>(T form) where T: System.Windows.Forms.Form, MEF_Interfaces.iAccess 
 		{
@@ -350,7 +390,7 @@ namespace MefAddIns
 			if (writeThink == null)
 			{
 				writeThink = new WriteThinker.WriteThink();
-				//TODO: Move the speakerules into this DLL (I copy it in the other one)
+
 				writeThink.speakerrules = PathToSpeakerRules ();
 
 			}

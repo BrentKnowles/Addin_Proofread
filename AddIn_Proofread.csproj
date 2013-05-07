@@ -56,6 +56,10 @@
       <Project>{C08FDDB5-5C59-4611-98E7-76674F290896}</Project>
       <Name>database</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\yom2013B\LayoutPanels\LayoutPanels.csproj">
+      <Project>{77AADEE3-CCBF-4802-9703-30EA7A4424AC}</Project>
+      <Name>LayoutPanels</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="mef_Addin_Proofread.cs" />
