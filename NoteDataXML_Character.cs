@@ -245,6 +245,7 @@ namespace AddIn_Proofread
 			ColorCombo.SelectedIndexChanged+= HandleSelectedColorIndexChanged;
 
 			ColorLabel.BackColor = (Color)ColorCombo.SelectedItem;
+			ColorLabel.ForeColor = TextUtils.InvertColor(ColorLabel.BackColor);
 
 			TablePanel.Controls.Add(GenderLabel,0,0);
 			TablePanel.Controls.Add(GenderCombo,1,0);
@@ -269,6 +270,7 @@ namespace AddIn_Proofread
 			//	NewMessage.Show ("Changing color to ", (sender as ComboBox).SelectedItem.ToString());
 				ColorName =  ((Color)(sender as ComboBox).SelectedItem).Name;
 				ColorLabel.BackColor = (Color)(sender as ComboBox).SelectedItem;
+				ColorLabel.ForeColor = TextUtils.InvertColor(ColorLabel.BackColor);
 			}
 
 		}
@@ -323,6 +325,18 @@ namespace AddIn_Proofread
 				this.Alias = (Note as NoteDataXML_Character).Alias;
 				this.ColorName =  (Note as NoteDataXML_Character).ColorName;
 			}
+		}
+
+		protected override AppearanceClass UpdateAppearance ()
+		{
+			AppearanceClass app =  base.UpdateAppearance ();
+			if (app != null)
+			{
+				TablePanel.BackColor = app.mainBackground;
+				TablePanel.ForeColor = app.secondaryForeground;
+
+			}
+			return app;
 		}
 
 	}
