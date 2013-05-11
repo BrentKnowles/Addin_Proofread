@@ -126,7 +126,7 @@ namespace MefAddIns
 		public override void RegisterType()
 		{
 			LayoutDetails.Instance.AddTo_TransactionsLIST(typeof(Transactions.TransactionUpdateProofreadVersion));
-			Layout.LayoutDetails.Instance.AddToList(typeof(NoteDataXML_Character), Loc.Instance.GetString ("Character"));
+			Layout.LayoutDetails.Instance.AddToList(typeof(NoteDataXML_Character), Loc.Instance.GetString ("Character") , PlugInBase.AddInFolderName);
 
 			// Build default table of grammar
 
