@@ -50,6 +50,8 @@ namespace WriteThinker
 			this.Icon = LayoutDetails.Instance.MainFormIcon;
 			FormUtils.SizeFormsForAccessibility(this, LayoutDetails.Instance.MainFormFontSize);
             InitializeComponent();
+			// don't want formatting like double spaces to show up
+			richTextBoxExPreview.MarkupOverride = new Layout.MarkupLanguageNone();
 			richTextBoxExPreview.LineSpace(RichTextExtended.LineSpaceTypes.Double, true);
             checkBoxShowParts.Checked = true;
 
