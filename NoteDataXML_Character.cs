@@ -51,6 +51,27 @@ namespace AddIn_Proofread
 		ComboBox ColorCombo= null;
 		Label ColorLabel = null;
 #endregion
+
+
+		int view = 0;
+		/// <summary>
+		/// Gets or sets the view.
+		/// 0 = Character Details On Top
+		/// 1 = Character Details to the Left
+		/// 2 = Character Details to the Right
+		/// </summary>
+		/// <value>
+		/// The view.
+		/// </value>
+		public int View {
+			get {
+				return view;
+			}
+			set {
+				view = value;
+			}
+		}
+
 		string gender="Male";
 
 		public string Gender {
@@ -105,7 +126,10 @@ namespace AddIn_Proofread
 				colorName = value;
 			}
 		}
-
+		protected override string GetIcon ()
+		{
+			return @"%*user.png";
+		}
 //		int characterColorInt = Color.White.ToArgb();
 //		public  int CharacterColorInt // what is stored
 //		{
@@ -139,6 +163,18 @@ namespace AddIn_Proofread
 		public NoteDataXML_Character(int height, int width):base(height, width)
 		{
 			CommonConstructor();
+		}
+
+		void SetupForView ()
+		{
+			if (TablePanel != null) {
+				switch (view) {
+				case 0: TablePanel.Dock = DockStyle.Top;
+					break;
+				case 1: TablePanel.Dock = DockStyle.Left; break;
+				case 2: TablePanel.Dock = DockStyle.Right; break;
+				}
+			}
 		}
 		
 		protected override void DoBuildChildren (LayoutPanelBase Layout)
@@ -247,6 +283,11 @@ namespace AddIn_Proofread
 			ColorLabel.BackColor = (Color)ColorCombo.SelectedItem;
 			ColorLabel.ForeColor = TextUtils.InvertColor(ColorLabel.BackColor);
 
+
+			ToolStripButton ToggleView = new ToolStripButton();
+			ToggleView.Text = Loc.Instance.GetString ("Toggle View");
+			ToggleView.Click+= HandleToggleViewClick;
+
 			TablePanel.Controls.Add(GenderLabel,0,0);
 			TablePanel.Controls.Add(GenderCombo,1,0);
 			TablePanel.Controls.Add(PriorityLabel,0,1);
@@ -259,9 +300,18 @@ namespace AddIn_Proofread
 			TablePanel.Controls.Add (ColorCombo,1, 3);
 
 		
+			properties.DropDownItems.Add (ToggleView);
+			SetupForView();
 
 			richBox.BringToFront();
 
+		}
+
+		void HandleToggleViewClick (object sender, EventArgs e)
+		{
+			View++;
+			if (View > 2) View = 0;
+			SetupForView ();
 		}
 
 		void HandleSelectedColorIndexChanged (object sender, EventArgs e)

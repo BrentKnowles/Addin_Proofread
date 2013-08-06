@@ -76,7 +76,8 @@ namespace MefAddIns
 		}
 		public string Version
 		{
-			get { return @"1.0.0.0"; }
+			// 1.1. added toggle view to character and icon for storyboard
+			get { return @"1.1.0.0"; }
 		}
 		public string Description
 		{
