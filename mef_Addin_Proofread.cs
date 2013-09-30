@@ -76,8 +76,9 @@ namespace MefAddIns
 		}
 		public string Version
 		{
+			// 1.2. Making characters linkable
 			// 1.1. added toggle view to character and icon for storyboard
-			get { return @"1.1.0.0"; }
+			get { return @"1.2.0.0"; }
 		}
 		public string Description
 		{
@@ -225,6 +226,45 @@ namespace MefAddIns
 			}
 		}
 
+
+		private NoteDataXML_Character ConvertLinkToCharacter (NoteDataXML_LinkNote link)
+		{
+			NoteDataXML_Character character = new NoteDataXML_Character(link);
+			// probably unnecessary
+			character.Data1 = link.Data1;
+
+			RichTextBox box = new RichTextBox();
+			box.Rtf = link.Data1;
+			string sText = box.Text;
+
+			 string sGender = General.SubStringBetween(sText, "Gender: ", "\n");
+			character.Gender = sGender;
+				
+				string sColor = General.SubStringBetween(sText, "Color: ", "\n").ToLower().Trim();
+				
+				character.ColorName = (sColor);
+				
+				int nPriority = 0;
+				string sPriority = General.SubStringBetween(sText, "Priority: ", "\n");
+				try
+				{
+					nPriority = Int32.Parse(sPriority);
+				}
+				catch (Exception)
+				{
+					
+				}
+				character.Priority = nPriority;
+				
+					
+				// now grab the alias Alias: \\par
+				
+				string sAlias = General.SubStringBetween(sText, "Alias: ", "\n");
+			character.Alias = sAlias;
+				box.Dispose ();
+			return character;
+		}
+
 		public WriteThinker.CharacterInDialogClass ParseTextForCharacter (NoteDataXML_Character characterNote)
 		{
 			WriteThinker.CharacterInDialogClass character = new WriteThinker.CharacterInDialogClass();
@@ -348,15 +388,28 @@ namespace MefAddIns
 				if (note != null)
 				{
 					//if (ap.ShapeType == Appearance.shapetype.Note)
-					if (note is NoteDataXML_Character)
+					if (note is NoteDataXML_Character || note is NoteDataXML_LinkNote)
 					{
 						//if (note.Data1 != null && note.Data1 != Constants.BLANK)
 						{
-							
+							NoteDataInterface NoteToUse = note;
+							// if a link we need to convert it to a character note first
+							if (note is NoteDataXML_LinkNote)
+							{
+								try
+								{
+									NoteToUse = ConvertLinkToCharacter(note as NoteDataXML_LinkNote);
+								}
+								catch (Exception ex)
+								{
+									NewMessage.Show (ex.ToString ());
+								}
+							}
+
 						//	box.Rtf = "";
 							//box.Rtf = note.Data1;
 							// We NEED to convert the RTF to text for easier parsing and allowing formatting like bolds
-							character = ParseTextForCharacter(note as NoteDataXML_Character);
+							character = ParseTextForCharacter(NoteToUse as NoteDataXML_Character);
 							
 							if (character != null)
 							{

@@ -42,7 +42,30 @@ namespace AddIn_Proofread
 		#region variables
 		public override bool IsLinkable { get { return true; }}
 		
+		public override string GetLinkData ()
+		{
+			string returnvalue = this.Data1;
+			try {
+				// now add custom stuff to front/top of it.
+				System.Windows.Forms.RichTextBox box = new RichTextBox ();
+				box.Rtf = this.Data1;
+				string gender = String.Format ("Gender: {0}\n", this.gender);
+				string color = String.Format ("Color: {0}\n", this.colorName);
+				string priority = String.Format ("Priority: {0}\n", this.priority);
+				string alias = String.Format ("Alias: {0}\n", this.alias);
 
+				box.SelectionStart = 0;
+				Clipboard.SetText (gender + color + priority + alias);
+				box.Paste ();
+				box.SelectedText = "\n";
+				returnvalue = box.Rtf;
+
+			} catch (Exception ex) {
+				NewMessage.Show (ex.ToString ());
+			}
+
+			return returnvalue;
+		}
 		
 #endregion
 		
@@ -363,7 +386,7 @@ namespace AddIn_Proofread
 
 		public NoteDataXML_Character(NoteDataInterface Note) : base(Note)
 		{
-			
+
 		}
 		public override void CopyNote (NoteDataInterface Note)
 		{
@@ -388,6 +411,8 @@ namespace AddIn_Proofread
 			}
 			return app;
 		}
+
+	
 
 	}
 }

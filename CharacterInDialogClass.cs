@@ -91,6 +91,12 @@ namespace WriteThinker
                 string[] names = new string[Alias.Length + 1];
                 names[0] = Name;
                 Array.Copy(Alias, 0, names, 1, Alias.Length);
+//				string debug = "";
+//				foreach (string sss in names)
+//				{
+//					debug = debug + sss;
+//				}
+//				CoreUtilities.NewMessage.Show (debug);
                 return names;
             }
             else

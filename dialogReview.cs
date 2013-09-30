@@ -277,7 +277,7 @@ namespace WriteThinker
 
 
 
-
+			labelAlias.Text = "";
 
             string srowfilter = "";
             if (overriderowfilter != "") 
@@ -286,7 +286,7 @@ namespace WriteThinker
                 srowfilter = SetupView(sCharacter);
 
             // buildrowfilter using Alias
-            labelAlias.Text = "";
+       
 
             //November 2012 http://aspnetresources.com/blog/apostrophe_in_rowfilter
             // must escape the apostophe character else causes a crash
