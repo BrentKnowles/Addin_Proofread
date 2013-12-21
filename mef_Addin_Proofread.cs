@@ -229,29 +229,29 @@ namespace MefAddIns
 
 		private NoteDataXML_Character ConvertLinkToCharacter (NoteDataXML_LinkNote link)
 		{
-			NoteDataXML_Character character = new NoteDataXML_Character(link);
+			NoteDataXML_Character character = new NoteDataXML_Character (link);
 			// probably unnecessary
 			character.Data1 = link.Data1;
 
-			RichTextBox box = new RichTextBox();
+			RichTextBox box = new RichTextBox ();
 			box.Rtf = link.Data1;
 			string sText = box.Text;
 
-			 string sGender = General.SubStringBetween(sText, "Gender: ", "\n");
-			character.Gender = sGender;
+			string sGender = General.SubStringBetween (sText, "Gender: ", "\n");
+			if (sGender == "") {
+				character.Caption = "error_proofread";
+			} else {
+				character.Gender = sGender;
 				
-				string sColor = General.SubStringBetween(sText, "Color: ", "\n").ToLower().Trim();
+				string sColor = General.SubStringBetween (sText, "Color: ", "\n").ToLower ().Trim ();
 				
 				character.ColorName = (sColor);
 				
 				int nPriority = 0;
-				string sPriority = General.SubStringBetween(sText, "Priority: ", "\n");
-				try
-				{
-					nPriority = Int32.Parse(sPriority);
-				}
-				catch (Exception)
-				{
+				string sPriority = General.SubStringBetween (sText, "Priority: ", "\n");
+				try {
+					nPriority = Int32.Parse (sPriority);
+				} catch (Exception) {
 					
 				}
 				character.Priority = nPriority;
@@ -259,9 +259,10 @@ namespace MefAddIns
 					
 				// now grab the alias Alias: \\par
 				
-				string sAlias = General.SubStringBetween(sText, "Alias: ", "\n");
-			character.Alias = sAlias;
+				string sAlias = General.SubStringBetween (sText, "Alias: ", "\n");
+				character.Alias = sAlias;
 				box.Dispose ();
+			}
 			return character;
 		}
 
@@ -406,14 +407,18 @@ namespace MefAddIns
 								}
 							}
 
-						//	box.Rtf = "";
-							//box.Rtf = note.Data1;
-							// We NEED to convert the RTF to text for easier parsing and allowing formatting like bolds
-							character = ParseTextForCharacter(NoteToUse as NoteDataXML_Character);
-							
-							if (character != null)
+							// we don't add if this linknote was not actually linked toa  character
+							if (NoteToUse.Caption != "error_proofread")
 							{
-								characters_temp.Add(character);
+							//	box.Rtf = "";
+								//box.Rtf = note.Data1;
+								// We NEED to convert the RTF to text for easier parsing and allowing formatting like bolds
+								character = ParseTextForCharacter(NoteToUse as NoteDataXML_Character);
+								
+								if (character != null)
+								{
+									characters_temp.Add(character);
+								}
 							}
 						}
 					}
