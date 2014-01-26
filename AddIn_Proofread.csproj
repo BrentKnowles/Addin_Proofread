@@ -87,6 +87,9 @@
       <HintPath>..\..\..\librariesused\netspell\src\NetSpell.SpellChecker\bin\Debug\NetSpell.SpellChecker.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\librariesused\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources\" />

@@ -1,3 +1,4 @@
+
 // dialogReview.cs
 //
 // Copyright (c) 2013 Brent Knowles (http://www.brentknowles.com)
@@ -37,8 +38,16 @@ using Layout;
 using CoreUtilities;
 using System.Text.RegularExpressions;
 using MefAddIns;
+using System.Net;
+using System.IO;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+
 namespace WriteThinker
 {
+	
     public partial class dialogReview : Form
     {
 
@@ -55,10 +64,174 @@ namespace WriteThinker
 			richTextBoxExPreview.LineSpace(RichTextExtended.LineSpaceTypes.Double, true);
             checkBoxShowParts.Checked = true;
 
+			//this.panelExtraDetails.Click+=new EventHandler(panelEnglexClick);
+			//this.buttonEnglex.Click+=new EventHandler(panelEnglexClick);
+			this.comboForEnglex.Items.Add ("Select...");
+			this.comboForEnglex.Items.Add ("Synonym");
+			this.comboForEnglex.Items.Add ("Antonym");
+			this.comboForEnglex.Items.Add ("Linked To");
+			this.comboForEnglex.Items.Add ("Part Of");
+			this.comboForEnglex.Items.Add ("Strong");
+			this.comboForEnglex.Items.Add ("Weak");
 
-		
+			this.comboForEnglex.SelectedIndex = 0;
+			this.comboForEnglex.SelectedIndexChanged+=SelectedIndexChangedForEnglexCombo;
+
+			this.panelForEnglex.SendToBack();// = System.Windows.Forms.DockStyle.Bottom;
         }
 
+		protected void SelectedIndexChangedForEnglexCombo (object sender, EventArgs e)
+		{
+
+			if ((sender as ComboBox).SelectedIndex > 0) {
+				this.Cursor = Cursors.WaitCursor;
+				panelEnglexClick (sender, e);
+				this.Cursor = Cursors.Default;
+			}
+																																																						
+		}
+
+		protected  string Connect(string url)
+		{
+			
+			
+			using (WebClient client = new WebClient())
+			{
+				/* if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+                 {
+                     client.Credentials = new NetworkCredential(userName, password);
+                 }
+                 */
+				try
+				{
+					using (Stream stream = client.OpenRead(url))
+					{
+						using (StreamReader reader = new StreamReader(stream))
+						{
+							return reader.ReadToEnd();
+						}
+					}
+				}
+				catch (WebException ex)
+				{
+					//
+					// Handle HTTP 404 errors gracefully and return a null string to indicate there is no content.
+					//
+					if (ex.Response is HttpWebResponse)
+					{
+						if ((ex.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotFound)
+						{
+							return null;
+						}
+					}
+					//             namespaceLogs.Logs.Line("ExecuteGetCommand", "Empire Avenue prob", ex.ToString());
+					//throw ex;
+					return "";
+				}
+			}
+		}
+
+		private int ConvertToMode ()
+		{
+			int index = comboForEnglex.SelectedIndex;
+			int mode = 2;
+			switch (index) {
+				case 1: mode = 2; break;
+				case 2: mode = 4; break;
+			case 3: mode = -20; break;
+			case 4: mode = -10; break;
+			case 5: mode = -30; break;
+			case 6: mode = -25; break;
+			}
+			return mode;
+		}
+		private  void panelEnglexClick (object sender, EventArgs e)
+		{
+
+
+
+			string sourceWord = this.Text;
+			// this is a string like **ly(180)** so we need to parse it
+
+			sourceWord = sourceWord.Replace('*',' ').Trim ();
+			int length = sourceWord.IndexOf("(");
+			if (length > 0)
+			{
+				sourceWord = sourceWord.Substring(0, length);
+			}
+			sourceWord = sourceWord.ToLower();
+			//NewMessage.Show (sourceWord);
+
+			int mode = ConvertToMode();
+			//52e44e158c22b6.79302667
+			string url = "http://englex.brentknowles.com/request.php?id=52e43f3c58bf08.74491031&word="+sourceWord+"&mode="+mode.ToString ();
+			//	string sTempResult = "no matches found"; // just until I can parse Json properly
+			//	string address =  endpoint + "?word="+newword+"&language="+language+"&key="+key+"&output="+output; 
+			//	string sourceJson = "";
+
+
+			for (int count = panelForEnglex.Controls.Count-1; count >= 0; count--)
+			{
+				Control control = panelForEnglex.Controls[count];
+				if (control is LinkLabel)
+				{
+					panelForEnglex.Controls.Remove (control);
+				}
+			}
+
+			string sJson = Connect (url);
+			System.Collections.ArrayList results = new System.Collections.ArrayList ();
+			//NewMessage.Show (sJson);
+			if (sJson.IndexOf ("1099") <= 0) {
+				if (sJson != null && sJson != "") {
+				
+					JArray a = JArray.Parse (sJson);
+					for (int i = 0 ; i < a.Count (); i++)
+					{
+						JObject item =  (JObject)a[i];
+						LinkLabel newLabel = new LinkLabel();
+						newLabel.Text = item["name"].ToString ().Replace ("\"", "");
+						newLabel.LinkClicked+=(object sender2, LinkLabelLinkClickedEventArgs e2) => CoreUtilities.General.OpenDocument("http://englex.brentknowles.com/index.php?word="+newLabel.Text
+						                                                                                                               ,"");
+						panelForEnglex.Controls.Add(newLabel);
+						newLabel.Dock = DockStyle.Right;
+						//NewMessage.Show (item["name"].ToString());
+//						foreach(JObject subitem in item["TrailCoordinates"])
+//						{
+//							Console.WriteLine(subitem["Longitude"] + " " + subitem["Latitude"]);
+//						}
+					}
+
+					if (a.Count () == 0)
+					{
+						LinkLabel newLabel = new LinkLabel();
+						newLabel.Text = "No Entries found";
+					}
+				//	NewMessage.Show (items[0]);
+				//	NewMessage.Show (a[0].);
+					/*
+					sourceJson = sJson;
+					JObject o = JObject.Parse (sourceJson);
+					NewMessage.Show (o.ToString ());
+					JArray o1 = (JArray)o ["response"];
+					sTempResult = "";
+				
+					for (int i = 0; i < o1.Count(); i++) {
+						JObject row = (JObject)o1 [i] ["list"];
+						string nameOfWord = (string)row ["name"];
+						NewMessage.Show (nameOfWord);
+						sTempResult = String.Format ("{0} - {1} {2}", nameOfWord, nameOfWord, Environment.NewLine);
+						results.Add (sTempResult);
+					}(/
+				
+				*/
+				}
+		
+			}
+
+			//NewMessage.Show(feed);
+			//System.Diagnostics.Debug.WriteLine(feed.SONGHISTORY[0].TITLE);	
+		}
         private DataView view = null; // this view is filled in Setup from the view created in a writeThinker object
         private CharacterInDialogClass[] characters = null;
 
@@ -338,90 +511,92 @@ namespace WriteThinker
         /// <param name="e"></param>
         private void listDialog_SelectedIndexChanged (object sender, EventArgs e)
 		{
-			try {
-				DataRowView row = (DataRowView)(listDialog.SelectedItem);
+			if (listDialog.SelectedItem != null) {
+				try {
+					DataRowView row = (DataRowView)(listDialog.SelectedItem);
 
             
             
-				if (row != null) {
+					if (row != null) {
                
-					FillPartOfSpeechTextBox (row ["Text"].ToString ());
-					richTextBoxExPreview.BackColor = Color.White;
-					if (FindDoubleLetterError (row ["Text"].ToString ()) > -1) {
-						richTextBoxExPreview.BackColor = Color.Red;
-						richTextBoxExPreview.Text = "Two Capital Letters!" + Environment.NewLine + richTextBoxExPreview.Text;
-					}
-					if ((bool)row ["dialog"] == true && FindFirstUpper (row ["Text"].ToString ()) > -1) {
-						richTextBoxExPreview.BackColor = Color.Red;
-						richTextBoxExPreview.Text = "DIRECT ADDRESS ERROR!" + Environment.NewLine + richTextBoxExPreview.Text;
+						FillPartOfSpeechTextBox (row ["Text"].ToString ());
+						richTextBoxExPreview.BackColor = Color.White;
+						if (FindDoubleLetterError (row ["Text"].ToString ()) > -1) {
+							richTextBoxExPreview.BackColor = Color.Red;
+							richTextBoxExPreview.Text = "Two Capital Letters!" + Environment.NewLine + richTextBoxExPreview.Text;
+						}
+						if ((bool)row ["dialog"] == true && FindFirstUpper (row ["Text"].ToString ()) > -1) {
+							richTextBoxExPreview.BackColor = Color.Red;
+							richTextBoxExPreview.Text = "DIRECT ADDRESS ERROR!" + Environment.NewLine + richTextBoxExPreview.Text;
 
 
-					}
+						}
                 
-					labelconfidence.Text = row ["confidence"].ToString ();
+						labelconfidence.Text = row ["confidence"].ToString ();
 
-					labelPassive.Text = String.Format ("Passive: {0}", row ["IsPassive"].ToString ());
-					labelSyllables.Text = String.Format ("Syllables: {0}", row ["syllables"].ToString ());
+						labelPassive.Text = String.Format ("Passive: {0}", row ["IsPassive"].ToString ());
+						labelSyllables.Text = String.Format ("Syllables: {0}", row ["syllables"].ToString ());
 
-					string sPreviousLine = "";
-					string sNextLine = "";
-					// look up id
-					int id = (int)row ["id"];
+						string sPreviousLine = "";
+						string sNextLine = "";
+						// look up id
+						int id = (int)row ["id"];
                 
-					if (id > 0)
-						id = id - 1;
-					DataRow foundrow = view.Table.Rows.Find (id);
-					if (foundrow != null) {
-						sPreviousLine = foundrow ["Text"].ToString ();
-					}
+						if (id > 0)
+							id = id - 1;
+						DataRow foundrow = view.Table.Rows.Find (id);
+						if (foundrow != null) {
+							sPreviousLine = foundrow ["Text"].ToString ();
+						}
 
-					id = id + 1; // reset
-					if (id < view.Table.Rows.Count - 1) {
-						id++;
-					}
-					foundrow = view.Table.Rows.Find (id);
-					if (foundrow != null) {
-						sNextLine = foundrow ["Text"].ToString ();
-					}
+						id = id + 1; // reset
+						if (id < view.Table.Rows.Count - 1) {
+							id++;
+						}
+						foundrow = view.Table.Rows.Find (id);
+						if (foundrow != null) {
+							sNextLine = foundrow ["Text"].ToString ();
+						}
 
-					labelPrevious.Text = sPreviousLine;
-					labelNext.Text = sNextLine;
-
-
-					// should find it in the source text, if available.
-					string sTextToFind = row ["Text"].ToString ();
+						labelPrevious.Text = sPreviousLine;
+						labelNext.Text = sNextLine;
 
 
+						// should find it in the source text, if available.
+						string sTextToFind = row ["Text"].ToString ();
 
-					// August 2012  - instead of removing " I'm not icing that when a sentence starts with a " we sometimes have failure
-					if (sTextToFind.Length > 0) {
-						if (sTextToFind [0] == '"') {
-							//sTextToFind[0] = ' '; // put a blank instead
-							sTextToFind = sTextToFind.TrimStart (new char[1] { '"' });
-							//sTextToFind = sTextToFind.Trim();
+
+
+						// August 2012  - instead of removing " I'm not icing that when a sentence starts with a " we sometimes have failure
+						if (sTextToFind.Length > 0) {
+							if (sTextToFind [0] == '"') {
+								//sTextToFind[0] = ' '; // put a blank instead
+								sTextToFind = sTextToFind.TrimStart (new char[1] { '"' });
+								//sTextToFind = sTextToFind.Trim();
+							}
+						}
+
+						// August 2012 -- I'm removing this "cleanup". I don't understand why I'd want to remove " marks because I need 'em
+						//#
+						// sep 2009
+						// do a little cleanup on strings so they are more findeable
+						//#
+						//sTextToFind = sTextToFind.Replace("\"", "");
+						//sTextToFind = sTextToFind.Replace("�", "'");
+
+						int nPositionFound = OnFindDialogLine (sTextToFind, LAST_POSITION_FOUND);
+						if (nPositionFound > -1) {
+							// we record the last position we found up to
+							// then we pass this in the next search so we NEVER backtrack
+							LAST_POSITION_FOUND = nPositionFound;
 						}
 					}
-
-					// August 2012 -- I'm removing this "cleanup". I don't understand why I'd want to remove " marks because I need 'em
-					//#
-					// sep 2009
-					// do a little cleanup on strings so they are more findeable
-					//#
-					//sTextToFind = sTextToFind.Replace("\"", "");
-					//sTextToFind = sTextToFind.Replace("�", "'");
-
-					int nPositionFound = OnFindDialogLine (sTextToFind, LAST_POSITION_FOUND);
-					if (nPositionFound > -1) {
-						// we record the last position we found up to
-						// then we pass this in the next search so we NEVER backtrack
-						LAST_POSITION_FOUND = nPositionFound;
-					}
+				} catch (Exception ex) {
+					// adding this because I received a crash (April 2013) when navigating a list of items
+					// not sure if it was a one-off (it is the only crash after hundreds of proofread attempts) or if
+					//it points to a subtle bug somewhere.
+					NewMessage.Show (ex.ToString ());
 				}
-			} catch (Exception ex) {
-				// adding this because I received a crash (April 2013) when navigating a list of items
-				// not sure if it was a one-off (it is the only crash after hundreds of proofread attempts) or if
-				//it points to a subtle bug somewhere.
-				NewMessage.Show (ex.ToString());
 			}
         }
 

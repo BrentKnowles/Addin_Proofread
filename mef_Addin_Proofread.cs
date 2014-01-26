@@ -76,9 +76,10 @@ namespace MefAddIns
 		}
 		public string Version
 		{
+			// 1.3 added Englex API hookup
 			// 1.2. Making characters linkable
 			// 1.1. added toggle view to character and icon for storyboard
-			get { return @"1.2.0.0"; }
+			get { return @"1.3.0.0"; }
 		}
 		public string Description
 		{

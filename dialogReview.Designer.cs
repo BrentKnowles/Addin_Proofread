@@ -59,7 +59,8 @@ namespace WriteThinker
         /// </summary>
         private void InitializeComponent()
         {
-		
+			//buttonEnglex = new System.Windows.Forms.Button();
+			comboForEnglex = new System.Windows.Forms.ComboBox();
 			 ButtonVersion = new System.Windows.Forms.Button();
 			ButtonVersion.Click += HandleUpdateVersionClick;
 
@@ -103,6 +104,9 @@ namespace WriteThinker
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+
+			this.panelForEnglex = new System.Windows.Forms.Panel();
+
             this.SuspendLayout();
             // 
             // groupCharacters
@@ -193,12 +197,39 @@ namespace WriteThinker
             // 
             // labelPassive
             // 
+
             this.labelPassive.AutoSize = true;
             this.labelPassive.Location = new System.Drawing.Point(3, 59);
             this.labelPassive.Name = "labelPassive";
             this.labelPassive.Size = new System.Drawing.Size(57, 16);
             this.labelPassive.TabIndex = 1;
             this.labelPassive.Text = "Passive";
+
+			//
+			//// panelForEnglex
+			//
+			//this.panelExtraDetails.Controls.Add(this.panelForEnglex);
+			//this.splitContainer2.Panel1.Controls.Add(this.panelForEnglex);
+		
+			this.panelForEnglex.Dock = System.Windows.Forms.DockStyle.Bottom;
+			//this.panelForEnglex.AutoSize = true;
+			this.panelForEnglex.Location = new System.Drawing.Point(0, 177);
+			this.panelForEnglex.Name = "panelEnglex";
+			this.panelForEnglex.Size = new System.Drawing.Size(100,50);
+			this.panelForEnglex.TabIndex = 1;
+			//this.panelForEnglex.BackColor = System.Drawing.Color.Orange;
+
+
+
+
+			this.panelForEnglex.Controls.Add (comboForEnglex);
+			this.comboForEnglex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboForEnglex.Dock = System.Windows.Forms.DockStyle.Left;
+			this.comboForEnglex.Size = new System.Drawing.Size(150, 50);
+			this.comboForEnglex.Text = "Select Englex...";
+
+
+		//	this panelForEnglex.Dock = System.Windows.Forms.DockStyle.Bottom;
             // 
             // labelSyllables
             // 
@@ -433,6 +464,7 @@ namespace WriteThinker
             // dialogReview
             // 
             this.ClientSize = new System.Drawing.Size(891, 592);
+			this.Controls.Add (this.panelForEnglex);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.groupCharacters);
             this.Name = "dialogReview";
@@ -501,7 +533,9 @@ namespace WriteThinker
         private System.Windows.Forms.Label labelPassive;
         private System.Windows.Forms.Label labelSyllables;
         private System.Windows.Forms.CheckBox checkBoxShowParts;
-
+		private System.Windows.Forms.Panel panelForEnglex;
+		private System.Windows.Forms.ComboBox comboForEnglex;
+		//private System.Windows.Forms.Button buttonEnglex;// = new System.Windows.Forms.Button();
 		private System.Windows.Forms.CheckBox AlwaysOnTop;
 		System.Windows.Forms.Button ButtonVersion;
 
