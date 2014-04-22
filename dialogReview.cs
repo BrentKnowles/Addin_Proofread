@@ -73,11 +73,13 @@ namespace WriteThinker
 			this.comboForEnglex.Items.Add ("Part Of");
 			this.comboForEnglex.Items.Add ("Strong");
 			this.comboForEnglex.Items.Add ("Weak");
+			this.comboForEnglex.Items.Add ("Sibling");
 
 			this.comboForEnglex.SelectedIndex = 0;
 			this.comboForEnglex.SelectedIndexChanged+=SelectedIndexChangedForEnglexCombo;
 
 			this.panelForEnglex.SendToBack();// = System.Windows.Forms.DockStyle.Bottom;
+			subEnglexPanel.BringToFront();
         }
 
 		protected void SelectedIndexChangedForEnglexCombo (object sender, EventArgs e)
@@ -142,6 +144,7 @@ namespace WriteThinker
 			case 4: mode = -10; break;
 			case 5: mode = -30; break;
 			case 6: mode = -25; break;
+			case 7: mode = -26; break;
 			}
 			return mode;
 		}
@@ -170,12 +173,12 @@ namespace WriteThinker
 			//	string sourceJson = "";
 
 
-			for (int count = panelForEnglex.Controls.Count-1; count >= 0; count--)
+			for (int count = subEnglexPanel.Controls.Count-1; count >= 0; count--)
 			{
-				Control control = panelForEnglex.Controls[count];
+				Control control = subEnglexPanel.Controls[count];
 				if (control is LinkLabel)
 				{
-					panelForEnglex.Controls.Remove (control);
+					subEnglexPanel.Controls.Remove (control);
 				}
 			}
 
@@ -193,8 +196,8 @@ namespace WriteThinker
 						newLabel.Text = item["name"].ToString ().Replace ("\"", "");
 						newLabel.LinkClicked+=(object sender2, LinkLabelLinkClickedEventArgs e2) => CoreUtilities.General.OpenDocument("http://englex.brentknowles.com/index.php?word="+newLabel.Text
 						                                                                                                               ,"");
-						panelForEnglex.Controls.Add(newLabel);
-						newLabel.Dock = DockStyle.Right;
+						subEnglexPanel.Controls.Add(newLabel);
+						newLabel.Dock = DockStyle.Left;
 						//NewMessage.Show (item["name"].ToString());
 //						foreach(JObject subitem in item["TrailCoordinates"])
 //						{

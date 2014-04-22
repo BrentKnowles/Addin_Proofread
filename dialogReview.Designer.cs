@@ -221,6 +221,10 @@ namespace WriteThinker
 
 
 
+			subEnglexPanel = new System.Windows.Forms.Panel();
+			this.panelForEnglex.Controls.Add (subEnglexPanel);
+			subEnglexPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			subEnglexPanel.AutoScroll = true;
 
 			this.panelForEnglex.Controls.Add (comboForEnglex);
 			this.comboForEnglex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -228,6 +232,7 @@ namespace WriteThinker
 			this.comboForEnglex.Size = new System.Drawing.Size(150, 50);
 			this.comboForEnglex.Text = "Select Englex...";
 
+		
 
 		//	this panelForEnglex.Dock = System.Windows.Forms.DockStyle.Bottom;
             // 
@@ -538,6 +543,6 @@ namespace WriteThinker
 		//private System.Windows.Forms.Button buttonEnglex;// = new System.Windows.Forms.Button();
 		private System.Windows.Forms.CheckBox AlwaysOnTop;
 		System.Windows.Forms.Button ButtonVersion;
-
+		System.Windows.Forms.Panel subEnglexPanel ;
     }
 }
