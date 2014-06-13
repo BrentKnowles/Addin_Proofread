@@ -53,9 +53,61 @@ namespace WriteThinker
 
 		Color GrammarColor1 = Color.PaleVioletRed;
 		Color GrammarColor2 = Color.LightYellow;
+		private List<int> EnglexIds = new List<int>();
+
+		private List<string> EnglexTypes {
+			get {
+				List<string> newList = new List<string>();
+				newList.Add ("Select...");
+				string url = "http://englex.brentknowles.com/request.php?id=52e43f3c58bf08.74491031&word=1&mode=1&restcall=10";
+				string sJson = Connect (url);
+				System.Collections.ArrayList results = new System.Collections.ArrayList ();
+				//NewMessage.Show (sJson);
+				if (sJson.IndexOf ("1099") <= 0) {
+					if (sJson != null && sJson != "") {
+						
+						JArray a = JArray.Parse (sJson);
+						for (int i = 0 ; i < a.Count (); i++)
+						{
+							JObject item =  (JObject)a[i];
+							newList.Add (item["name"].ToString ());
+							EnglexIds.Add ((int)item["id"]);
+							//item["id"]
+
+						}
+						
+
+					}
+				}
+				if ( newList.Count == 1)
+				{
+					NewMessage.Show (Loc.Instance.GetString("Web List Not Found. Building Default"));
+					newList.Add ("Synonym");
+									newList.Add ("Antonym");
+									newList.Add ("Linked To");
+									newList.Add ("Part Of");
+									newList.Add ("Strong");
+									newList.Add ("Weak");
+									newList.Add ("Sibling");
+
+					EnglexIds.Add (2);
+					EnglexIds.Add (4);
+					EnglexIds.Add (-20);
+					EnglexIds.Add (-10);
+					EnglexIds.Add (-30);
+					EnglexIds.Add (-25);
+					EnglexIds.Add (-26);
+				}
+				// now generated details
+//				
+				return newList;
+			}
+		}
 
         public dialogReview()
         {
+			this.Name = "dialogReview";
+		//	NewMessage.Show (this.Name);
 			this.Icon = LayoutDetails.Instance.MainFormIcon;
 			FormUtils.SizeFormsForAccessibility(this, LayoutDetails.Instance.MainFormFontSize);
             InitializeComponent();
@@ -66,33 +118,103 @@ namespace WriteThinker
 
 			//this.panelExtraDetails.Click+=new EventHandler(panelEnglexClick);
 			//this.buttonEnglex.Click+=new EventHandler(panelEnglexClick);
-			this.comboForEnglex.Items.Add ("Select...");
-			this.comboForEnglex.Items.Add ("Synonym");
-			this.comboForEnglex.Items.Add ("Antonym");
-			this.comboForEnglex.Items.Add ("Linked To");
-			this.comboForEnglex.Items.Add ("Part Of");
-			this.comboForEnglex.Items.Add ("Strong");
-			this.comboForEnglex.Items.Add ("Weak");
-			this.comboForEnglex.Items.Add ("Sibling");
+			this.comboForEnglex.Items.AddRange(EnglexTypes.ToArray());
+
+
 
 			this.comboForEnglex.SelectedIndex = 0;
 			this.comboForEnglex.SelectedIndexChanged+=SelectedIndexChangedForEnglexCombo;
 
 			this.panelForEnglex.SendToBack();// = System.Windows.Forms.DockStyle.Bottom;
 			subEnglexPanel.BringToFront();
+
+			this.KeyPreview = true;
+
+			((appframe.MainFormBase) Application.OpenForms[0]).SetupSecondaryFormToHaveHotkeys(this);
         }
 
+		private Control lastButton  = null;
+
+		public void HandleToggleInside()
+		{
+			if (panelButtons.Controls.Count > 0)
+			{
+				
+				if (!listDialog.Focused)
+				{
+					
+					listDialog.Focus ();
+				}
+				else
+				{
+					if (lastButton  != null)
+					{
+						lastButton.Focus();
+					}
+					else
+					{
+						panelButtons.Controls[0].Focus();
+					}
+					
+				}
+				//					if (!panelButtons.Controls[0].Focused)
+				//					{
+				//						panelButtons.Controls[0].Focus();
+				//				
+				//					}
+				//					else
+				//					{
+				//						listDialog.Focus ();
+				//					}
+			}
+		}
+		/// <summary>
+		/// Raises the key up event.
+		/// </summary>
+		/// <param name='e'>
+		/// E.
+		/// </param>
+//		protected override void OnKeyUp (KeyEventArgs e)
+//		{
+//			base.OnKeyUp (e);
+//		
+//			if (e.KeyCode == Keys.F2) {
+//			
+//
+//
+//			}
+//
+//		}
+		/// <summary>
+		/// Selecteds the index changed for englex combo.
+		/// </summary>
+		/// <param name='sender'>
+		/// Sender.
+		/// </param>
+		/// <param name='e'>
+		/// E.
+		/// </param>
 		protected void SelectedIndexChangedForEnglexCombo (object sender, EventArgs e)
 		{
 
-			if ((sender as ComboBox).SelectedIndex > 0) {
-				this.Cursor = Cursors.WaitCursor;
-				panelEnglexClick (sender, e);
-				this.Cursor = Cursors.Default;
-			}
+			UpdateEnglexResults();
 																																																						
 		}
 
+		protected void UpdateEnglexResults()
+		{
+			if (comboForEnglex.SelectedIndex > 0) {
+				this.Cursor = Cursors.WaitCursor;
+				panelEnglexClick (comboForEnglex);
+				this.Cursor = Cursors.Default;
+			}
+		}
+		/// <summary>
+		/// Connect the specified url.
+		/// </summary>
+		/// <param name='url'>
+		/// URL.
+		/// </param>
 		protected  string Connect(string url)
 		{
 			
@@ -133,41 +255,43 @@ namespace WriteThinker
 			}
 		}
 
-		private int ConvertToMode ()
+		/// <summary>
+		/// Converts to mode.
+		/// </summary>
+		/// <returns>
+		/// The to mode.
+		/// </returns>
+		private int ConvertEnglexStringToEnglexMode ()
 		{
 			int index = comboForEnglex.SelectedIndex;
 			int mode = 2;
-			switch (index) {
-				case 1: mode = 2; break;
-				case 2: mode = 4; break;
-			case 3: mode = -20; break;
-			case 4: mode = -10; break;
-			case 5: mode = -30; break;
-			case 6: mode = -25; break;
-			case 7: mode = -26; break;
-			}
+//			switch (index) {
+//				case 1: mode = 2; break;
+//				case 2: mode = 4; break;
+//			case 3: mode = -20; break;
+//			case 4: mode = -10; break;
+//			case 5: mode = -30; break;
+//			case 6: mode = -25; break;
+//			case 7: mode = -26; break;
+//			}
+			mode = EnglexIds[index-1];
 			return mode;
 		}
-		private  void panelEnglexClick (object sender, EventArgs e)
+
+
+
+
+		private  void panelEnglexClick (object sender /*, EventArgs e*/)
 		{
 
 
 
-			string sourceWord = this.Text;
-			// this is a string like **ly(180)** so we need to parse it
-
-			sourceWord = sourceWord.Replace('*',' ').Trim ();
-			int length = sourceWord.IndexOf("(");
-			if (length > 0)
-			{
-				sourceWord = sourceWord.Substring(0, length);
-			}
-			sourceWord = sourceWord.ToLower();
+			string sourceWord = textForEnglex.Text;
 			//NewMessage.Show (sourceWord);
 
-			int mode = ConvertToMode();
+			int mode = ConvertEnglexStringToEnglexMode();
 			//52e44e158c22b6.79302667
-			string url = "http://englex.brentknowles.com/request.php?id=52e43f3c58bf08.74491031&word="+sourceWord+"&mode="+mode.ToString ();
+			string url = "http://englex.brentknowles.com/request.php?id=52e43f3c58bf08.74491031&word="+sourceWord+"&mode="+mode.ToString ()+"&restcall=1";
 			//	string sTempResult = "no matches found"; // just until I can parse Json properly
 			//	string address =  endpoint + "?word="+newword+"&language="+language+"&key="+key+"&output="+output; 
 			//	string sourceJson = "";
@@ -328,7 +452,7 @@ namespace WriteThinker
 
 
             //(sender as Button).ForeColor = Color.LightGray; // basically just modify the text once button pressed to help give feeling of PROGRESS
-
+			lastButton = (sender as Button);
             if ((sender as Button).BackColor == Color.Beige)
             {
                 panelForDialog.Visible = false;
@@ -368,8 +492,26 @@ namespace WriteThinker
                 panelForDialog.Dock = DockStyle.Fill;
             // march 2011 - changed this to using tag
             SelectCharacter( (sender as Button).Tag.ToString());
+
+
+			
+
             }
-          
+			// setup Englex text
+			string sourceWord = (sender as Button).Text;
+			// this is a string like **ly(180)** so we need to parse it
+			
+							sourceWord = sourceWord.Replace('*',' ').Trim ();
+							int length = sourceWord.IndexOf("(");
+							if (length > 0)
+							{
+								sourceWord = sourceWord.Substring(0, length);
+							}
+			sourceWord = sourceWord.ToLower();
+			textForEnglex.Text = sourceWord;
+
+			// update englex look
+			UpdateEnglexResults();
         }
 
         /// <summary>

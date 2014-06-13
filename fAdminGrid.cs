@@ -46,6 +46,8 @@ namespace WriteThinker
         public fAdminGrid()
         {
 			this.Icon = LayoutDetails.Instance.MainFormIcon;
+			this.TopMost = true;
+
 			FormUtils.SizeFormsForAccessibility(this, LayoutDetails.Instance.MainFormFontSize);
             InitializeComponent();
 

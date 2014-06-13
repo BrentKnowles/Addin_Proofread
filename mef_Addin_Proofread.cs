@@ -76,11 +76,13 @@ namespace MefAddIns
 		}
 		public string Version
 		{
+			// 1.6 Englex improvements, flexible look up + STat Panel Return (F3)
+			// 1.5 Key navigation
 			// 1.4 improving look of Englex hookup
 			// 1.3 added Englex API hookup
 			// 1.2. Making characters linkable
 			// 1.1. added toggle view to character and icon for storyboard
-			get { return @"1.4.0.0"; }
+			get { return @"1.6.0.0"; }
 		}
 		public string Description
 		{
@@ -115,9 +117,35 @@ namespace MefAddIns
 			myAddInOnMainFormForHotKeys = addin;
 			myRunnForHotKeys=Runner;
 			Hotkeys.Add (new KeyData (Loc.Instance.GetString ("Proofread"), HotkeyAction, Keys.Alt, Keys.P, Constants.BLANK, true, guid));
+			Hotkeys.Add (new KeyData (Loc.Instance.GetString ("Toggle In Proofread"), ToggleInside,Keys.None, Keys.F2, "dialogReview", true, guid+"2"));
+			Hotkeys.Add (new KeyData (Loc.Instance.GetString ("Toggle Outside Proofread"), ToggleOutside,Keys.None, Keys.F1, "dialogReview", true, guid+"3"));
+			Hotkeys.Add (new KeyData (Loc.Instance.GetString ("Stat Panel"), StatPanel,Keys.None, Keys.F3, "dialogReview", true, guid+"4"));
 			
 		}
-		
+		public void StatPanel (bool b)
+		{
+			if (writeThink != null && review != null) {
+				review.AlwaysOnTop.Checked = false;
+				writeThink.ShowStatPanel(review.Icon);
+			}
+		}
+		public void ToggleInside (bool b)
+		{
+
+			if (review != null) {
+				review.HandleToggleInside();
+			}
+
+		}
+		public void ToggleOutside (bool b)
+		{
+			if (review != null) {
+				//review.Text="Toggle Outside";
+				Application.OpenForms [0].Activate ();
+				((appframe.MainFormBase)Application.OpenForms [0]).LastMainForm = review;
+			}
+
+		}
 		public void HotkeyAction(bool b)
 		{
 			if (myRunnForHotKeys != null && myAddInOnMainFormForHotKeys != null)

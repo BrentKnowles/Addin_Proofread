@@ -61,6 +61,8 @@ namespace WriteThinker
         {
 			//buttonEnglex = new System.Windows.Forms.Button();
 			comboForEnglex = new System.Windows.Forms.ComboBox();
+			textForEnglex = new System.Windows.Forms.TextBox();
+
 			 ButtonVersion = new System.Windows.Forms.Button();
 			ButtonVersion.Click += HandleUpdateVersionClick;
 
@@ -232,6 +234,9 @@ namespace WriteThinker
 			this.comboForEnglex.Size = new System.Drawing.Size(150, 50);
 			this.comboForEnglex.Text = "Select Englex...";
 
+			this.panelForEnglex.Controls.Add (textForEnglex);
+			this.textForEnglex.Dock = System.Windows.Forms.DockStyle.Left;
+
 		
 
 		//	this panelForEnglex.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -381,7 +386,7 @@ namespace WriteThinker
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(242, 97);
             this.textBox1.TabIndex = 10;
-            this.textBox1.Text = "Dialog Preview - this feature is in beta. Please send feedback to support@youroth" +
+            this.textBox1.Text = "Dialog Preview - Press F2 to jump between. F3 = stats This feature is in beta. Please send feedback to support@youroth" +
                 "ermind.com. Depending on interest, dialog accuracy\r\n will be improved (Click to " +
                 "Close)";
             this.textBox1.Click += new System.EventHandler(this.textBox1_Click);
@@ -442,6 +447,7 @@ namespace WriteThinker
             this.richTextBoxExPreview.Size = new System.Drawing.Size(497, 177);
             this.richTextBoxExPreview.TabIndex = 0;
             this.richTextBoxExPreview.Text = "";
+			this.richTextBoxExPreview.ReadOnly = false; // 31/05/2014
             // 
             // checkBoxShowParts
             // 
@@ -540,8 +546,9 @@ namespace WriteThinker
         private System.Windows.Forms.CheckBox checkBoxShowParts;
 		private System.Windows.Forms.Panel panelForEnglex;
 		private System.Windows.Forms.ComboBox comboForEnglex;
+		private System.Windows.Forms.TextBox textForEnglex;
 		//private System.Windows.Forms.Button buttonEnglex;// = new System.Windows.Forms.Button();
-		private System.Windows.Forms.CheckBox AlwaysOnTop;
+		public System.Windows.Forms.CheckBox AlwaysOnTop;
 		System.Windows.Forms.Button ButtonVersion;
 		System.Windows.Forms.Panel subEnglexPanel ;
     }
